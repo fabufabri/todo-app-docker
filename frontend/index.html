@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuaderno de tareas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <main class="sheet">
+    <header class="sheet__head">
+      <div class="sheet__title-block">
+        <p class="sheet__eyebrow">Cuaderno de tareas</p>
+        <h1 class="sheet__title">Pendientes</h1>
+      </div>
+      <div class="stamp" id="stamp" aria-hidden="true">
+        <span class="stamp__count" id="stamp-count">0/0</span>
+        <span class="stamp__label">hechas</span>
+      </div>
+    </header>
+
+    <form id="task-form" class="entry-line" autocomplete="off">
+      <span class="entry-line__mark">＋</span>
+      <input
+        type="text"
+        id="new-task"
+        class="entry-line__input"
+        placeholder="Escribir una tarea nueva…"
+        maxlength="255"
+        required
+      >
+      <button type="submit" class="entry-line__submit">Anotar</button>
+    </form>
+
+    <div class="toolbar">
+      <div class="tabs" role="tablist" aria-label="Filtrar tareas">
+        <button class="tabs__item is-active" data-filter="all" role="tab" aria-selected="true">Todas</button>
+        <button class="tabs__item" data-filter="active" role="tab" aria-selected="false">Activas</button>
+        <button class="tabs__item" data-filter="completed" role="tab" aria-selected="false">Hechas</button>
+      </div>
+      <input
+        type="search"
+        id="filter"
+        class="search"
+        placeholder="Buscar…"
+        maxlength="255"
+      >
+    </div>
+
+    <ul id="task-list" class="ledger" aria-live="polite"></ul>
+
+    <p id="empty-state" class="empty-state" hidden>
+      La página está en blanco. Anotá tu primera tarea arriba.
+    </p>
+
+    <footer class="sheet__foot">
+      <p id="status-msg" class="status-msg" role="status"></p>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

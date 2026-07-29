@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: todo_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/db-init.sql:/docker-entrypoint-initdb.d/db-init.sql:ro
+    # NO se publica ningún puerto al exterior: solo accesible dentro de la red de docker-compose
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: todo_backend
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      PORT: 3000
+    depends_on:
+      db:
+        condition: service_healthy
+    # tampoco se publica el puerto 3000: solo nginx puede hablarle (red interna)
+
+  web:
+    build: ./frontend
+    container_name: todo_web
+    restart: unless-stopped
+    ports:
+      - "80:80"      # único puerto expuesto al exterior
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:      # volumen con nombre: persiste los datos aunque se borren los contenedores

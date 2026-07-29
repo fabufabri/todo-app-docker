@@ -1,0 +1,33 @@
+name: Deploy con Docker (runner self-hosted en tu PC)
+
+# Se ejecuta automáticamente en cada push a la rama main.
+# A diferencia de la versión con VPS, este workflow NO se conecta por SSH:
+# corre directamente sobre un "runner" instalado en tu propia PC Windows
+# (ver README-SIN-VPS.md), que ya tiene Docker Desktop instalado. Por eso
+# no hace falta rsync ni claves SSH: el runner YA tiene el código local.
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    # "self-hosted" = se ejecuta en TU máquina, no en un servidor de GitHub
+    runs-on: self-hosted
+
+    steps:
+      - name: Descargar la última versión del código
+        uses: actions/checkout@v4
+
+      - name: Reconstruir y levantar los contenedores
+        shell: pwsh
+        run: docker compose up -d --build --remove-orphans
+
+      - name: Limpiar imágenes viejas
+        shell: pwsh
+        run: docker image prune -f
+
+      - name: Verificar que la app responde
+        shell: pwsh
+        run: |
+          Start-Sleep -Seconds 3
+          curl.exe -f http://localhost/api/health
