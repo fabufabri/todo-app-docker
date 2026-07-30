@@ -15,6 +15,10 @@ jobs:
           echo "${{ secrets.VPS_SSH_KEY }}" > /tmp/deploy_key
           chmod 600 /tmp/deploy_key
 
+      - name: Verificar clave SSH
+        run: |
+          ssh-keygen -y -f /tmp/deploy_key
+
       - name: Desplegar al VPS por SSH
         uses: appleboy/ssh-action@v1.2.0
         with:
