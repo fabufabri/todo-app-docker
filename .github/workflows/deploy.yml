@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Configurar clave SSH
         run: |
           echo "${{ secrets.VPS_SSH_KEY }}" > /tmp/deploy_key
@@ -19,12 +20,19 @@ jobs:
         run: |
           ssh-keygen -y -f /tmp/deploy_key
 
+      - name: Probar conexión SSH al VPS
+        run: |
+          ssh -i /tmp/deploy_key \
+          -o StrictHostKeyChecking=no \
+          ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "whoami"
+
       - name: Desplegar al VPS por SSH
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key_path: /tmp/deploy_key
+          port: 22
           script: |
             cd ~/todo-app-docker
             git pull origin main
