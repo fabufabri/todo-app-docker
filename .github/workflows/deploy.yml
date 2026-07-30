@@ -10,7 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Desplegar en el VPS por SSH
+      - name: Verificar secretos
+        shell: bash
+        env:
+          HOST: ${{ secrets.VPS_HOST }}
+          USERNAME: ${{ secrets.VPS_USER }}
+          KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          echo "HOST: $HOST"
+          echo "USER: $USERNAME"
+          echo "KEY LENGTH: ${#KEY}"
+          echo "$KEY" | head -n 1
+          echo "$KEY" | tail -n 1
+
+      - name: Desplegar al VPS
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VPS_HOST }}

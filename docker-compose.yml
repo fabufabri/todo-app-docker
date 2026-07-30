@@ -38,7 +38,7 @@ services:
     container_name: todo_web
     restart: unless-stopped
     ports:
-      - "80:80"      # único puerto expuesto al exterior
+      - "8080:80"      # único puerto expuesto al exterior
     depends_on:
       - backend
 
